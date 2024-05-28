@@ -13,30 +13,59 @@ class View(ft.UserControl):
         self._controller = None
         # graphical elements
         self._title = None
-        self.txt_name = None
-        self.btn_hello = None
-        self.txt_result = None
-        self.txt_container = None
+        self._dd_anno=None
+        self._dd_brand=None
+        self._dd_retailer=None
+        self._btn_top_vendite=None
+        self._btn_analizza_vendite=None
+        self._txt_result=None
 
+    def read_retailer(self, e):
+        self._retailer = e.control.data
     def load_interface(self):
         # title
-        self._title = ft.Text("Hello World", color="blue", size=24)
+        self._title = ft.Text("Analizza Vendite", color="blue", size=24)
         self._page.controls.append(self._title)
-
-        #ROW with some controls
-        # text field for the name
-        self.txt_name = ft.TextField(
-            label="name",
-            width=200,
-            hint_text="Insert a your name"
+        #ROW1
+        self._dd_anno = ft.Dropdown(
+            label="anno",
+            width=self._page.window_width*1/4,
+            hint_text="selziona un filtro per l'anno",
+            on_change=self._controller.cambia_anno,
+            options=[ft.dropdown.Option("Nessun Filtro")]
         )
-
-        # button for the "hello" reply
-        self.btn_hello = ft.ElevatedButton(text="Hello", on_click=self._controller.handle_hello)
-        row1 = ft.Row([self.txt_name, self.btn_hello],
-                      alignment=ft.MainAxisAlignment.CENTER)
+        self._dd_brand = ft.Dropdown(
+            label="brand",
+            width=self._page.window_width*1/4,
+            hint_text="selziona un filtro per il brand",
+            on_change=self._controller.cambia_brand,
+            options=[ft.dropdown.Option("Nessun Filtro")]
+        )
+        self._dd_retailer = ft.Dropdown(
+            label="retailer",
+            width=self._page.window_width*1/2,
+            hint_text="selziona un filtro per il retailer",
+            on_change=self._controller.cambia_retailer,
+            options=[ft.dropdown.Option("Nessun Filtro")]
+        )
+        anni=self._controller.dd_fill_anni()
+        for anno in anni:
+            self._dd_anno.options.append(ft.dropdown.Option(anno))
+        brands = self._controller.dd_fill_brands()
+        for brand in brands:
+            self._dd_brand.options.append(ft.dropdown.Option(brand))
+        retailers = self._controller.dd_fill_retailers()
+        for retailer in retailers:
+            self._dd_retailer.options.append(ft.dropdown.Option(key= retailer.Retailer_code, text=retailer.Retailer_name, data=retailer, on_click=self.read_retailer))
+        row1=ft.Row([self._dd_anno, self._dd_brand, self._dd_retailer],ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row1)
-
+        self._page.update()
+        #ROW 2
+        self._btn_top_vendite=ft.ElevatedButton(text="Top Vendite", on_click=self._controller.handle_top_vendite)
+        self._btn_analizza_vendite = ft.ElevatedButton(text="Analizza Vendite", on_click=self._controller.handle_analizza_vendite)
+        row2=ft.Row([self._btn_top_vendite, self._btn_analizza_vendite],alignment=ft.MainAxisAlignment.CENTER)
+        self._page.controls.append(row2)
+        self._page.update()
         # List View where the reply is printed
         self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
         self._page.controls.append(self.txt_result)
