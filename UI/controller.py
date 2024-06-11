@@ -34,7 +34,7 @@ class Controller:
         for i in range (5):
             self._view.txt_result.controls.append(ft.Text(vendite_ordinate[i]))
         self._view.update_page()
-    def handle_analizza_vendite(selfself, e):
+    def handle_analizza_vendite(self, e):
         pass
     def dd_fill_anni(self):
         return self._model.dd_fill_anni()
